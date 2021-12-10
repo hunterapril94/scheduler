@@ -16,3 +16,17 @@ export function getAppointmentsForDay(state, day) {
   }
   return appointments
 }
+
+export function getInterview(state, interview) {
+  let result=null;
+  if(interview) {
+    result = {
+    student: interview.student,
+    interviewer: {
+      id: interview.interviewer,
+      name: state.interviewers[interview.interviewer].name,
+      avatar: state.interviewers[interview.interviewer].avatar
+    }} 
+  };
+  return result;
+}
