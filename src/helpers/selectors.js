@@ -6,8 +6,8 @@ export function getAppointmentsForDay(state, day) {
       correctDay=state.days[i]
     }
   }
-  console.log(correctDay);
-  console.log(correctDay.appointments)
+  // console.log(correctDay);
+  // console.log(correctDay.appointments)
   if(correctDay && correctDay.appointments) {
     for(let i=0; i < correctDay.appointments.length; i++) {
       let id = correctDay.appointments[i]
@@ -29,4 +29,23 @@ export function getInterview(state, interview) {
     }} 
   };
   return result;
+}
+export function getInterviewersForDay(state, day) {
+  let correctDay={};
+  let interviewers=[];
+  for(let i=0; i<state.days.length; i++) {
+    if(state.days[i].name === day) {
+      correctDay=state.days[i]
+    }
+  }
+  // console.log(correctDay);
+  console.log(correctDay.interviewers)
+  if(correctDay && correctDay.interviewers) {
+    for(let i=0; i < correctDay.interviewers.length; i++) {
+      let id = correctDay.interviewers[i]
+      interviewers.push(state.interviewers[`${id}`])
+      console.log(interviewers)
+    }
+  }
+  return interviewers
 }
