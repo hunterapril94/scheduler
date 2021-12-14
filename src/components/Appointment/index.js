@@ -6,6 +6,7 @@ import Empty from "./Empty";
 import Form from "./Form";
 import Status from "./Status";
 import Confirm from "./Confirm";
+import Error from "./Error";
 import useVisualMode from "hooks/useVisualMode";
 
 const EMPTY = "EMPTY"
@@ -14,6 +15,9 @@ const CREATE = "CREATE"
 const SAVING = "SAVING"
 const DELETING = "DELETING"
 const CONFIRM = "CONFIRM"
+const EDIT = "EDIT"
+const ERROR_SAVE = "ERROR_SAVE"
+const ERROR_DELETE = "ERROR_DELETE"
 
 
 export default function Appointment(props) {
@@ -25,20 +29,21 @@ function save(name, interviewer) {
     student: name,
     interviewer
   };
+  props.bookInterview(props.id, interview).then(transition(SHOW)).catch(err=>transition(ERROR_SAVE, true))
+
   transition(SAVING)
-  props.bookInterview(props.id, interview).then(transition(SHOW, true))
 }
 function onDelete() {
   transition(CONFIRM)
 }
 function onConfirm() {
-  transition(DELETING)
-  props.cancelInterview(props.id).then(transition(EMPTY, true)).catch(err=>console.log(err.message))
+  props.cancelInterview(props.id).then(transition(EMPTY)).catch(err=>transition(ERROR_DELETE, true))
+  transition(DELETING, true)
 }
   return(
     <article className="appointment">
       <Header time={props.time} />
-      {mode === SHOW && <Show student={props.interview.student} interviewer={props.interview.interviewer.name} onDelete={onDelete}/>}
+      {mode === SHOW && <Show student={props.interview.student} interviewer={props.interview.interviewer.name} onDelete={onDelete} onEdit={()=>{transition(EDIT)}}/>}
       {mode === EMPTY && <Empty onAdd={()=>{transition(CREATE)}} />}
       {mode === CREATE && <Form interviewers={props.interviewers} onCancel={() => {
         back();
@@ -50,6 +55,13 @@ function onConfirm() {
         back();
         console.log("cancelled");
         }} onConfirm={onConfirm} message="Delete this Appointment?" />}
+      {mode === EDIT && <Form student={props.interview.student} interviewer={props.interview.interviewer.id} interviewers={props.interviewers} onCancel={() => {
+        back();
+        console.log("cancelled");
+        }} onSave={save}/>}
+      {mode === ERROR_DELETE && <Error message="There was an error deleting your message" onClose={back}/>}
+      {mode === ERROR_SAVE && <Error message="There was an error saving your message" onClose={back}/>}
+
     </article>
   )
 }
