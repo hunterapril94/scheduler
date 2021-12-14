@@ -14,11 +14,6 @@ export default function Application(props) {
     appointments: {},
     interviewers: {},
   });
-  const dailyAppointments = getAppointmentsForDay(state, state.day)
-  const setDay = day => setState({ ...state, day });
-  const dailyInterviewers = getInterviewersForDay(state, state.day)
-  
-
   useEffect(() => {Promise.all([
     axios.get('http://localhost:8001/api/days'),
     axios.get('http://localhost:8001/api/appointments'),
@@ -27,6 +22,38 @@ export default function Application(props) {
   ]).then((all) => {
     setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data}))
   })},[])
+  const dailyAppointments = getAppointmentsForDay(state, state.day)
+  const setDay = day => setState({ ...state, day });
+  const dailyInterviewers = getInterviewersForDay(state, state.day)
+  
+
+
+  function bookInterview(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    setState({...state, appointments})
+    return(axios.put(`http://localhost:8001/api/appointments/${id}`, {...appointment}).then(() => {Promise.all([
+      axios.get('http://localhost:8001/api/days'),
+      axios.get('http://localhost:8001/api/appointments'),
+      axios.get('http://localhost:8001/api/interviewers')
+      
+    ]).then((all) => {
+      setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data}))
+    })},[]
+
+    ))
+  }
+
+  function cancelInterview(id) {
+    
+  }
+  
   return (
     <main className="layout">
       <section className="sidebar">
@@ -48,12 +75,14 @@ export default function Application(props) {
       <section className="schedule">
         {dailyAppointments.map((appointment) => {
           const interview = getInterview(state, appointment.interview)
+          console.log(interview)
           return (
             <Appointment key={appointment.id}
             id={appointment.id}
             time={appointment.time}
             interview={interview}
-            interviewers={dailyInterviewers} />
+            interviewers={dailyInterviewers}
+            bookInterview={bookInterview} />
           )
         })}
         <Appointment key="last" time="5pm" />

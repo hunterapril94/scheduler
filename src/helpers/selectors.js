@@ -39,12 +39,12 @@ export function getInterviewersForDay(state, day) {
     }
   }
   // console.log(correctDay);
-  console.log(correctDay.interviewers)
+  // console.log(correctDay.interviewers)
   if(correctDay && correctDay.interviewers) {
     for(let i=0; i < correctDay.interviewers.length; i++) {
       let id = correctDay.interviewers[i]
       interviewers.push(state.interviewers[`${id}`])
-      console.log(interviewers)
+      // console.log(interviewers)
     }
   }
   return interviewers
