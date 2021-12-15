@@ -8,6 +8,7 @@ import Status from "./Status";
 import Confirm from "./Confirm";
 import Error from "./Error";
 import useVisualMode from "hooks/useVisualMode";
+import useApplicationData from "hooks/useApplicationData";
 
 const EMPTY = "EMPTY"
 const SHOW = "SHOW"
@@ -29,16 +30,18 @@ function save(name, interviewer) {
     student: name,
     interviewer
   };
-  props.bookInterview(props.id, interview).then(transition(SHOW)).catch(err=>transition(ERROR_SAVE, true))
 
   transition(SAVING)
+  props.bookInterview(props.id, interview).then(transition(SHOW)).catch(err=>transition(ERROR_SAVE, true))
+
 }
 function onDelete() {
   transition(CONFIRM)
 }
-function onConfirm() {
-  props.cancelInterview(props.id).then(transition(EMPTY)).catch(err=>transition(ERROR_DELETE, true))
+function onConfirm() {  
   transition(DELETING, true)
+  props.cancelInterview(props.id).then(transition(EMPTY)).catch(err=>transition(ERROR_DELETE, true))
+
 }
   return(
     <article className="appointment">
