@@ -39,6 +39,7 @@ function onDelete() {
   transition(CONFIRM)
 }
 function onConfirm() {  
+
   transition(DELETING, true)
   props.cancelInterview(props.id).then(transition(EMPTY)).catch(err=>transition(ERROR_DELETE, true))
 

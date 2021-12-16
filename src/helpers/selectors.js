@@ -1,3 +1,4 @@
+
 export function getAppointmentsForDay(state, day) {
   let correctDay={};
   let appointments=[];
