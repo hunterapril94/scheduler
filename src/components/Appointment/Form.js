@@ -13,6 +13,7 @@ export default function Form(props) {
     setError("")
   }
   function validate() {
+    // validates that all required info is passed
     if (student === "") {
       setError("Student name cannot be blank");
       return;

@@ -1,5 +1,6 @@
 
 import React from "react";
+// Shows when no appointment
 
 export default function Empty(props) {
   return(

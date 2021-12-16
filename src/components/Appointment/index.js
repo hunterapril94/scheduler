@@ -9,7 +9,7 @@ import Confirm from "./Confirm";
 import Error from "./Error";
 import useVisualMode from "hooks/useVisualMode";
 import useApplicationData from "hooks/useApplicationData";
-
+// shows all the modes possible for our appointment
 const EMPTY = "EMPTY"
 const SHOW = "SHOW"
 const CREATE = "CREATE"
