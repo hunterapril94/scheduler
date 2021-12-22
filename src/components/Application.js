@@ -1,14 +1,13 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
 import DayList from "./DayList";
 import Appointment from "./Appointment";
-
 import "components/Application.scss";
-import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "helpers/selectors";
+import { getInterview } from "helpers/selectors";
 import useApplicationData from "hooks/useApplicationData";
 
+
 export default function Application(props) {
-  const {state, setDay, bookInterview, cancelInterview, dailyAppointments, dailyInterviewers} = useApplicationData()
-  useApplicationData();
+  const {state, setDay, bookInterview, cancelInterview, dailyAppointments, dailyInterviewers} = useApplicationData();
   return (
     <main className="layout">
       <section className="sidebar">
@@ -18,10 +17,10 @@ export default function Application(props) {
           alt="Interview Scheduler"
         />
         <hr className="sidebar__separator sidebar--centered" />
-        <nav className="sidebar__menu"></nav>
-
+        <nav className="sidebar__menu">
         <DayList days={state.days} value={state.day} onChange={setDay} />
-          <img
+        </nav>
+        <img
             className="sidebar__lhl sidebar--centered"
             src="images/lhl.png"
             alt="Lighthouse Labs"
