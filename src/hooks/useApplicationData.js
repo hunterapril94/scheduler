@@ -1,6 +1,9 @@
 import { useState,useEffect } from "react";
 import axios from "axios";
 import { getAppointmentsForDay, getInterviewersForDay } from "helpers/selectors";
+require('dotenv').config()
+
+const api = process.env.REACT_APP_WEBSOCKET_URL
 
 export default function useApplicationData() {
 
@@ -11,18 +14,29 @@ export default function useApplicationData() {
     interviewers: {},
   });  
   useEffect(() => {Promise.all([
-    axios.get('http://localhost:8001/api/days'),
-    axios.get('http://localhost:8001/api/appointments'),
-    axios.get('http://localhost:8001/api/interviewers')
+  
+    axios.get(api + '/api/days'),
+    axios.get(api + '/api/appointments'),
+    axios.get(api + '/api/interviewers')
     
-    ]).then((all) => {
+    ]).then((all) => {  console.log(api)
     setState(prev => ({...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data}))
     })},[]
   );
 
+    function appointmentIncluded(id) {
+      if(state.appointments[id].interview === null) {
+        return false;
+      } else {
 
+        console.log(state.appointments[id])
+        return true;
+      }
+      
+    }
 
   function bookInterview(id, interview) {
+    const appointmentThere = appointmentIncluded(id) 
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
@@ -33,13 +47,18 @@ export default function useApplicationData() {
     };
     // Logic to update spots
     let correctDay;
+    let days;
     for(let day of state.days) {
-      if(day.appointments.includes(id)) {
+      if(day.appointments.includes(id) && appointmentThere === false) {
         correctDay = {...day, spots: day.spots-1};
+        days = state.days.splice(correctDay.id-1, 1, correctDay)
+      } else {
+        correctDay = day
+        days = state.days
       }
     }
-    const days = state.days.splice(correctDay.id-1, 1, correctDay)
-    return(axios.put(`http://localhost:8001/api/appointments/${id}`, {...appointment})
+  
+    return(axios.put(api + `/api/appointments/${id}`, {...appointment})
       .then((res)=>{
           setState(prev=> ({...prev, appointments, ...days}))
       }))
@@ -64,7 +83,7 @@ export default function useApplicationData() {
 
     const days = state.days.splice(correctDay.id-1, 1, correctDay)
 
-    return(axios.delete(`http://localhost:8001/api/appointments/${id}`)
+    return(axios.delete(api + `/api/appointments/${id}`)
     .then((res)=>{
       if(res.status < 400) {
         setState(prev=> ({...prev, appointments, ...days}))
